@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atrapa Azucenas</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fce4ec;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+    h1 {
+      margin-top: 50px;
+      font-size: 3em;
+      color: #ad1457;
+    }
+    #startBtn, #restartBtn {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      background: #ec407a;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #score {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 1.5em;
+      color: #880e4f;
+      display: none;
+      z-index: 1000;
+    }
+    .flower {
+      position: absolute;
+      width: 10vw;
+      max-width: 60px;
+      cursor: pointer;
+      z-index: 500;
+    }
+    #message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2em;
+      color: #4a148c;
+      display: none;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">Atrapa Azucenas</h1>
+  <button id="startBtn">Empezar</button>
+  <div id="score">Score: 0</div>
+  <div id="message">Ganaste ¡Estoy muy orgulloso de ti, te amo!</div>
+  <button id="restartBtn" style="display:none;">Reiniciar</button>
+  <style>
+  /* Corazones de fondo */
+  .heart {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: red;
+    clip-path: polygon(
+        50% 0%, 
+        61% 10%, 
+        68% 25%, 
+        50% 50%, 
+        32% 25%, 
+        39% 10%);
+    animation: floatUp 15s linear infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0.5); opacity:0.5;}
+    50% { opacity:1;}
+    100% { transform: translateY(-10vh) scale(1); opacity:0;}
+  }
+</style>
+
+<script>
+  // Función para crear corazones en el fondo
+  function createHearts(num) {
+    for (let i = 0; i < num; i++) {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.animationDuration = 5 + Math.random() * 3 + 's'; // duración aleatoria
+      document.body.appendChild(heart);
+    }
+  }
+
+  // Al cargar la página, crear 20 corazones de fondo
+  window.addEventListener('load', () => {
+    createHearts(20);
+  });
+</script>
+
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const scoreDiv = document.getElementById("score");
+    const message = document.getElementById("message");
+    const title = document.getElementById("title");
+
+    let score = 0;
+    let gameInterval;
+
+    startBtn.addEventListener("click", startGame);
+    restartBtn.addEventListener("click", restartGame);
+
+    function startGame() {
+      title.style.display = "none";
+      startBtn.style.display = "none";
+      scoreDiv.style.display = "block";
+      score = 0;
+      scoreDiv.textContent = "Score: 0";
+      message.style.display = "none";
+      restartBtn.style.display = "none";
+
+      gameInterval = setInterval(createFlower, 1000);
+    }
+
+    function createFlower() {
+      const flower = document.createElement("img");
+      // Imagen de Azucena embebida en base64
+      flower.src = "Azucena.png";
+      flower.classList.add("flower");
+
+      flower.style.left = Math.random() * (window.innerWidth - 60) + "px";
+      flower.style.top = "-60px";
+
+      document.body.appendChild(flower);
+
+      let fallInterval = setInterval(() => {
+        let top = parseFloat(flower.style.top);
+        if (top < window.innerHeight - 60) {
+          flower.style.top = top + 2 + "px";
+        } else {
+          flower.remove();
+          clearInterval(fallInterval);
+        }
+      }, 20);
+
+      flower.addEventListener("click", () => {
+        score += 10;
+        scoreDiv.textContent = "Score: " + score;
+        flower.remove();
+        clearInterval(fallInterval);
+
+        if (score >= 100) {
+          endGame();
+        }
+      });
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      document.querySelectorAll(".flower").forEach(f => f.remove());
+      message.style.display = "block";
+      restartBtn.style.display = "inline-block";
+    }
+
+    function restartGame() {
+      startGame();
+    }
+  </script>
+</body>
+</html>
