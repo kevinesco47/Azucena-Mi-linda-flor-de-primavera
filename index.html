@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atrapa Azucenas</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fce4ec;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+    h1 {
+      margin-top: 50px;
+      font-size: 3em;
+      color: #ad1457;
+    }
+    #startBtn {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      background: #ec407a;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #score {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1.5em;
+      color: #880e4f;
+      display: none;
+    }
+    .flower {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+    #message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2em;
+      color: #4a148c;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">Atrapa Azucenas</h1>
+  <button id="startBtn">Empezar</button>
+  <div id="score">Score: 0</div>
+  <div id="message">Ganaste ¡Estoy muy orgulloso de ti, te amo!</div>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const scoreDiv = document.getElementById("score");
+    const message = document.getElementById("message");
+    const title = document.getElementById("title");
+
+    let score = 0;
+    let gameInterval;
+
+    startBtn.addEventListener("click", startGame);
+
+    function startGame() {
+      title.style.display = "none";
+      startBtn.style.display = "none";
+      scoreDiv.style.display = "block";
+      score = 0;
+      scoreDiv.textContent = "Score: 0";
+
+      gameInterval = setInterval(createFlower, 1000);
+    }
+
+    function createFlower() {
+      const flower = document.createElement("img");
+      flower.src = "https://cdn-icons-png.flaticon.com/512/765/765640.png"; // Flor PNG
+      flower.classList.add("flower");
+
+      flower.style.left = Math.random() * (window.innerWidth - 50) + "px";
+      flower.style.top = "-60px";
+
+      document.body.appendChild(flower);
+
+      let fallInterval = setInterval(() => {
+        let top = parseInt(flower.style.top);
+        if (top < window.innerHeight - 50) {
+          flower.style.top = top + 5 + "px";
+        } else {
+          flower.remove();
+          clearInterval(fallInterval);
+        }
+      }, 30);
+
+      flower.addEventListener("click", () => {
+        score += 10;
+        scoreDiv.textContent = "Score: " + score;
+        flower.remove();
+        clearInterval(fallInterval);
+
+        if (score >= 100) {
+          endGame();
+        }
+      });
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      const flowers = document.querySelectorAll(".flower");
+      flowers.forEach(f => f.remove());
+      message.style.display = "block";
+    }
+  </script>
+</body>
+</html>
