@@ -18,7 +18,7 @@
       font-size: 3em;
       color: #ad1457;
     }
-    #startBtn {
+    #startBtn, #restartBtn {
       padding: 15px 30px;
       font-size: 1.2em;
       border: none;
@@ -29,27 +29,33 @@
       margin-top: 20px;
     }
     #score {
-      position: absolute;
+      position: fixed;
       top: 20px;
       right: 20px;
       font-size: 1.5em;
       color: #880e4f;
       display: none;
+      z-index: 1000;
     }
     .flower {
       position: absolute;
-      width: 50px;
-      height: 50px;
+      width: 10vw;
+      max-width: 60px;
       cursor: pointer;
+      z-index: 500;
     }
     #message {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 2em;
       color: #4a148c;
       display: none;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      z-index: 1000;
     }
   </style>
 </head>
@@ -58,9 +64,11 @@
   <button id="startBtn">Empezar</button>
   <div id="score">Score: 0</div>
   <div id="message">Ganaste ¡Estoy muy orgulloso de ti, te amo!</div>
+  <button id="restartBtn" style="display:none;">Reiniciar</button>
 
   <script>
     const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
     const scoreDiv = document.getElementById("score");
     const message = document.getElementById("message");
     const title = document.getElementById("title");
@@ -69,6 +77,7 @@
     let gameInterval;
 
     startBtn.addEventListener("click", startGame);
+    restartBtn.addEventListener("click", restartGame);
 
     function startGame() {
       title.style.display = "none";
@@ -76,29 +85,32 @@
       scoreDiv.style.display = "block";
       score = 0;
       scoreDiv.textContent = "Score: 0";
+      message.style.display = "none";
+      restartBtn.style.display = "none";
 
       gameInterval = setInterval(createFlower, 1000);
     }
 
     function createFlower() {
       const flower = document.createElement("img");
-      flower.src = "https://cdn-icons-png.flaticon.com/512/765/765640.png"; // Flor PNG
+      // Imagen de Azucena embebida en base64
+      flower.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABJElEQVRYR+2VwQ3DIAxFv0z/ck8StFMx6wMTChUyySWmtEFHvmZKTRMx06u6c+gDgM4BLwAaAOUkz0Ko4BuAeR+X+VSAhOwmWJDKkN+uZ+FSYH9QhIbCwBdo9PQZsCUwVMCk1CcABd6kP0p1rHMC9yAlzW+QB7xXo/0Au0FycrgH7kD5Bd8k3R2t5nN0n12PZ6QlAkn60N3MMA2x9fS6kiwG7AQtjYCUJqTnXYE1oB+kV8AJ2Hy3hR3VJqgAAAABJRU5ErkJggg==";
       flower.classList.add("flower");
 
-      flower.style.left = Math.random() * (window.innerWidth - 50) + "px";
+      flower.style.left = Math.random() * (window.innerWidth - 60) + "px";
       flower.style.top = "-60px";
 
       document.body.appendChild(flower);
 
       let fallInterval = setInterval(() => {
-        let top = parseInt(flower.style.top);
-        if (top < window.innerHeight - 50) {
-          flower.style.top = top + 5 + "px";
+        let top = parseFloat(flower.style.top);
+        if (top < window.innerHeight - 60) {
+          flower.style.top = top + 2 + "px";
         } else {
           flower.remove();
           clearInterval(fallInterval);
         }
-      }, 30);
+      }, 20);
 
       flower.addEventListener("click", () => {
         score += 10;
@@ -114,9 +126,13 @@
 
     function endGame() {
       clearInterval(gameInterval);
-      const flowers = document.querySelectorAll(".flower");
-      flowers.forEach(f => f.remove());
+      document.querySelectorAll(".flower").forEach(f => f.remove());
       message.style.display = "block";
+      restartBtn.style.display = "inline-block";
+    }
+
+    function restartGame() {
+      startGame();
     }
   </script>
 </body>
